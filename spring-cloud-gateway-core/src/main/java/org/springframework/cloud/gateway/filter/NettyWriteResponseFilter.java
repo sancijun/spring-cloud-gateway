@@ -24,12 +24,11 @@ import org.springframework.core.io.buffer.NettyDataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
-
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.CLIENT_RESPONSE_ATTR;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.http.client.HttpClientResponse;
+
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.CLIENT_RESPONSE_ATTR;
 
 /**
  * @author Spencer Gibb
@@ -62,10 +61,10 @@ public class NettyWriteResponseFilter implements GlobalFilter, Ordered {
 			//TODO: what if it's not netty
 
 			final Flux<NettyDataBuffer> body = clientResponse.receive()
-					.retain() //TODO: needed?
-					.map(factory::wrap);
+					.retain() //TODO: needed? // TODO 芋艿，用途
+					.map(factory::wrap); // TODO 芋艿，用途
 
-			return response.writeWith(body);
+			return response.writeWith(body); // TODO 芋艿，实现
 		}));
 	}
 

@@ -17,15 +17,14 @@
 
 package org.springframework.cloud.gateway.route;
 
+import org.springframework.cloud.gateway.support.NotFoundException;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.springframework.cloud.gateway.support.NotFoundException;
-
 import static java.util.Collections.synchronizedMap;
-
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * @author Spencer Gibb
@@ -36,8 +35,10 @@ public class InMemoryRouteDefinitionRepository implements RouteDefinitionReposit
 
 	@Override
 	public Mono<Void> save(Mono<RouteDefinition> route) {
-		return route.flatMap( r -> {
-			routes.put(r.getId(), r);
+        System.out.println(Thread.currentThread() + ":#save()");
+        return route.flatMap( r -> {
+            System.out.println(Thread.currentThread() + ":#save2()");
+            routes.put(r.getId(), r);
 			return Mono.empty();
 		});
 	}

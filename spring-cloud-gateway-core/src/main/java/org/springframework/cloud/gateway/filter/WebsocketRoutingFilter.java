@@ -1,10 +1,5 @@
 package org.springframework.cloud.gateway.filter;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
-
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.socket.WebSocketHandler;
@@ -14,12 +9,13 @@ import org.springframework.web.reactive.socket.client.WebSocketClient;
 import org.springframework.web.reactive.socket.server.WebSocketService;
 import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
 import org.springframework.web.server.ServerWebExchange;
-
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.isAlreadyRouted;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.setAlreadyRouted;
-
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.*;
 
 /**
  * @author Spencer Gibb
