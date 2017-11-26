@@ -17,13 +17,12 @@
 
 package org.springframework.cloud.gateway.route;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Spencer Gibb
@@ -31,6 +30,9 @@ import reactor.core.publisher.Flux;
 public class CachingRouteLocator implements RouteLocator {
 
 	private final RouteLocator delegate;
+    /**
+     * 路由缓存
+     */
 	private final AtomicReference<List<Route>> cachedRoutes = new AtomicReference<>();
 
 	public CachingRouteLocator(RouteLocator delegate) {
@@ -54,6 +56,7 @@ public class CachingRouteLocator implements RouteLocator {
 
 	private List<Route> collectRoutes() {
 		List<Route> routes = this.delegate.getRoutes().collectList().block();
+		// 排序
 		AnnotationAwareOrderComparator.sort(routes);
 		return routes;
 	}

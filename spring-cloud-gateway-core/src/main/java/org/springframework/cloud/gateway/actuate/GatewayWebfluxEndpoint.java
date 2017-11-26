@@ -48,8 +48,14 @@ public class GatewayWebfluxEndpoint implements ApplicationEventPublisherAware {
 	private RouteDefinitionLocator routeDefinitionLocator;
 	private List<GlobalFilter> globalFilters;
 	private List<GatewayFilterFactory> GatewayFilters;
+    /**
+     * 存储器 RouteDefinitionLocator 对象
+     */
 	private RouteDefinitionWriter routeDefinitionWriter;
 	private RouteLocator routeLocator;
+    /**
+     * 应用事件发布器
+     */
 	private ApplicationEventPublisher publisher;
 
 	public GatewayWebfluxEndpoint(RouteDefinitionLocator routeDefinitionLocator, List<GlobalFilter> globalFilters,
@@ -119,12 +125,11 @@ http POST :8080/admin/gateway/routes/apiaddreqhead uri=http://httpbin.org:80 pre
 	@PostMapping("/routes/{id}")
 	@SuppressWarnings("unchecked")
 	public Mono<ResponseEntity<Void>> save(@PathVariable String id, @RequestBody Mono<RouteDefinition> route) {
-		return this.routeDefinitionWriter.save(route.map(r ->  {
-		    System.out.println(Thread.currentThread() + ":#map()");
+		return this.routeDefinitionWriter.save(route.map(r ->  { // 设置 ID
 			r.setId(id);
 			log.debug("Saving route: " + route);
 			return r;
-		})).then(Mono.defer(() ->
+		})).then(Mono.defer(() -> // status ：201 ，创建成功。参见 HTTP 规范 ：https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/201
 			Mono.just(ResponseEntity.created(URI.create("/routes/"+id)).build())
 		));
 	}
@@ -132,8 +137,8 @@ http POST :8080/admin/gateway/routes/apiaddreqhead uri=http://httpbin.org:80 pre
 	@DeleteMapping("/routes/{id}")
 	public Mono<ResponseEntity<Object>> delete(@PathVariable String id) {
 		return this.routeDefinitionWriter.delete(Mono.just(id))
-				.then(Mono.defer(() -> Mono.just(ResponseEntity.ok().build())))
-				.onErrorResume(t -> t instanceof NotFoundException, t -> Mono.just(ResponseEntity.notFound().build()));
+				.then(Mono.defer(() -> Mono.just(ResponseEntity.ok().build()))) // 删除成功
+				.onErrorResume(t -> t instanceof NotFoundException, t -> Mono.just(ResponseEntity.notFound().build())); // 删除失败
 	}
 
 	@GetMapping("/routes/{id}")

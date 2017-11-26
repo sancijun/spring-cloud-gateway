@@ -52,16 +52,16 @@ public class RequestRateLimiterGatewayFilterFactory implements GatewayFilterFact
 		}
 
 		return (exchange, chain) -> keyResolver.resolve(exchange).flatMap(key ->
-		// TODO: if key is empty?
-		rateLimiter.isAllowed(key, args).flatMap(response -> {
-			// TODO: set some headers for rate, tokens left
+            // TODO: if key is empty?
+            rateLimiter.isAllowed(key, args).flatMap(response -> {
+                // TODO: set some headers for rate, tokens left
 
-			if (response.isAllowed()) {
-				return chain.filter(exchange);
-			}
-			exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
-			return exchange.getResponse().setComplete();
-		}));
+                if (response.isAllowed()) {
+                    return chain.filter(exchange);
+                }
+                exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
+                return exchange.getResponse().setComplete();
+            }));
 	}
 
 }

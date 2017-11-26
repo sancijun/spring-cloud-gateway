@@ -20,6 +20,7 @@ spring:
         order: 9000
         predicates:
         - Path=/echo
+        - Query=foo, ba.
       # =====================================
 #      - id: default_path_to_httpbin
 #        uri: ${test.uri}

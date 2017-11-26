@@ -17,32 +17,41 @@
 
 package org.springframework.cloud.gateway.route;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
+
+import java.net.URI;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
+ * 路由
+ *
  * @author Spencer Gibb
  */
 public class Route implements Ordered {
 
+    /**
+     * 路由编号
+     */
 	private final String id;
-
+    /**
+     * 路由向的 URI
+     */
 	private final URI uri;
-
+    /**
+     * 顺序
+     */
 	private final int order;
-
+    /**
+     * 断言数组
+     */
 	private final Predicate<ServerWebExchange> predicate;
-
+    /**
+     * 过滤器数组
+     */
 	private final List<GatewayFilter> gatewayFilters;
 
 	public static Builder builder() {
