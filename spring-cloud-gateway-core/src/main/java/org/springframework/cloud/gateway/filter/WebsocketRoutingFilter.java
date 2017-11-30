@@ -43,14 +43,19 @@ public class WebsocketRoutingFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        // 获得 requestUrl
 		URI requestUrl = exchange.getRequiredAttribute(GATEWAY_REQUEST_URL_ATTR);
 
+        // 判断是否能够处理
 		String scheme = requestUrl.getScheme();
 		if (isAlreadyRouted(exchange) || (!scheme.equals("ws") && !scheme.equals("wss"))) {
 			return chain.filter(exchange);
 		}
+
+        // 设置已经路由
 		setAlreadyRouted(exchange);
 
+		// 处理连接请求
 		return this.webSocketService.handleRequest(exchange,
 				new ProxyWebSocketHandler(requestUrl, this.webSocketClient, exchange.getRequest().getHeaders()));
 	}
@@ -94,12 +99,16 @@ public class WebsocketRoutingFilter implements GlobalFilter, Ordered {
 				@Override
 				public Mono<Void> handle(WebSocketSession proxySession) {
 					// Use retain() for Reactor Netty
+                    // 转发消息 客户端 =》后端服务
 					Mono<Void> proxySessionSend = proxySession
 							.send(session.receive().doOnNext(WebSocketMessage::retain));
+					// 转发消息 后端服务=》客户端
 							// .log("proxySessionSend", Level.FINE);
 					Mono<Void> serverSessionSend = session
 							.send(proxySession.receive().doOnNext(WebSocketMessage::retain));
 							// .log("sessionSend", Level.FINE);
+
+                    //
 					return Mono.when(proxySessionSend, serverSessionSend).then();
 				}
 

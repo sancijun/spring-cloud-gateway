@@ -17,9 +17,7 @@
 
 package org.springframework.cloud.gateway.config;
 
-import java.util.List;
-import java.util.function.Consumer;
-
+import com.netflix.hystrix.HystrixObservableCommand;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfiguration;
 import org.springframework.boot.actuate.health.Health;
@@ -32,54 +30,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.reactive.HttpHandlerAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.actuate.GatewayWebfluxEndpoint;
-import org.springframework.cloud.gateway.filter.ForwardRoutingFilter;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.cloud.gateway.filter.NettyRoutingFilter;
-import org.springframework.cloud.gateway.filter.NettyWriteResponseFilter;
-import org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter;
-import org.springframework.cloud.gateway.filter.WebsocketRoutingFilter;
-import org.springframework.cloud.gateway.filter.factory.AddRequestHeaderGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.AddRequestParameterGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.AddResponseHeaderGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.GatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.HystrixGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.PrefixPathGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.RedirectToGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.RemoveNonProxyHeadersGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.RemoveRequestHeaderGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.RemoveResponseHeaderGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.SecureHeadersGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.SecureHeadersProperties;
-import org.springframework.cloud.gateway.filter.factory.SetPathGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.SetResponseHeaderGatewayFilterFactory;
-import org.springframework.cloud.gateway.filter.factory.SetStatusGatewayFilterFactory;
+import org.springframework.cloud.gateway.filter.*;
+import org.springframework.cloud.gateway.filter.factory.*;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RateLimiter;
 import org.springframework.cloud.gateway.handler.FilteringWebHandler;
 import org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping;
-import org.springframework.cloud.gateway.handler.predicate.AfterRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.BeforeRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.BetweenRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.CookieRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.HeaderRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.HostRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.MethodRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.PathRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.QueryRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.RemoteAddrRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.RoutePredicateFactory;
-import org.springframework.cloud.gateway.route.CachingRouteLocator;
-import org.springframework.cloud.gateway.route.CompositeRouteDefinitionLocator;
-import org.springframework.cloud.gateway.route.CompositeRouteLocator;
-import org.springframework.cloud.gateway.route.InMemoryRouteDefinitionRepository;
-import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
-import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
-import org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator;
-import org.springframework.cloud.gateway.route.RouteDefinitionWriter;
-import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.handler.predicate.*;
+import org.springframework.cloud.gateway.route.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -88,14 +47,14 @@ import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClien
 import org.springframework.web.reactive.socket.client.WebSocketClient;
 import org.springframework.web.reactive.socket.server.WebSocketService;
 import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
-
-import com.netflix.hystrix.HystrixObservableCommand;
-
 import reactor.core.publisher.Flux;
 import reactor.ipc.netty.http.client.HttpClient;
 import reactor.ipc.netty.http.client.HttpClientOptions;
 import reactor.ipc.netty.resources.PoolResources;
 import rx.RxReactiveStreams;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author Spencer Gibb
@@ -229,7 +188,12 @@ public class GatewayAutoConfiguration {
 	@Bean
 	public WebClientWriteResponseFilter webClientWriteResponseFilter() {
 		return new WebClientWriteResponseFilter();
-	}*/
+	}
+	*/
+//    @Bean
+//    public WebClientWriteResponseFilter webClientWriteResponseFilter() {
+//        return new WebClientWriteResponseFilter();
+//    }
 
 	// Predicate Factory beans
 

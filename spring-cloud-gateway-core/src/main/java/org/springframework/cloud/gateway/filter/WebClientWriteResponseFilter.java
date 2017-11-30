@@ -24,10 +24,9 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.CLIENT_RESPONSE_ATTR;
-
-import reactor.core.publisher.Mono;
 
 /**
  * @author Spencer Gibb
@@ -48,6 +47,7 @@ public class WebClientWriteResponseFilter implements GlobalFilter, Ordered {
 		// NOTICE: nothing in "pre" filter stage as CLIENT_RESPONSE_ATTR is not added
 		// until the WebHandler is run
 		return chain.filter(exchange).then(Mono.defer(() -> {
+		    // 获得 Response
 			ClientResponse clientResponse = exchange.getAttribute(CLIENT_RESPONSE_ATTR);
 			if (clientResponse == null) {
 				return Mono.empty();

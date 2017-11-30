@@ -49,6 +49,7 @@ public class NettyWriteResponseFilter implements GlobalFilter, Ordered {
 		// NOTICE: nothing in "pre" filter stage as CLIENT_RESPONSE_ATTR is not added
 		// until the WebHandler is run
 		return chain.filter(exchange).then(Mono.defer(() -> {
+		    // 获得 Response
 			HttpClientResponse clientResponse = exchange.getAttribute(CLIENT_RESPONSE_ATTR);
 			// HttpClientResponse clientResponse = getAttribute(exchange, CLIENT_RESPONSE_ATTR, HttpClientResponse.class);
 			if (clientResponse == null) {
@@ -57,14 +58,13 @@ public class NettyWriteResponseFilter implements GlobalFilter, Ordered {
 			log.trace("NettyWriteResponseFilter start");
 			ServerHttpResponse response = exchange.getResponse();
 
+			// 将 Netty Response 写回给客户端。
 			NettyDataBufferFactory factory = (NettyDataBufferFactory) response.bufferFactory();
 			//TODO: what if it's not netty
-
 			final Flux<NettyDataBuffer> body = clientResponse.receive()
-					.retain() //TODO: needed? // TODO 芋艿，用途
-					.map(factory::wrap); // TODO 芋艿，用途
-
-			return response.writeWith(body); // TODO 芋艿，实现
+					.retain() // ByteBufFlux => ByteBufFlux
+					.map(factory::wrap); // ByteBufFlux  => Flux<NettyDataBuffer>
+			return response.writeWith(body);
 		}));
 	}
 

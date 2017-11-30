@@ -19,20 +19,27 @@ spring:
       # $ wscat --connect ws://localhost:8080/echo
       - id: websocket_test
         uri: ws://localhost:9000
-        order: 9000
+        order: 8000
         predicates:
-        - Path=/foo/{segment}
+        - Path=/echo
         filters:
         - AddRequestHeader=X-Request-Foo, Bar
       # =====================================
-      - id: default_path_to_httpbin
+      - id: forward_sample
 #        uri: ${test.uri}
         uri: forward:///globalfilters
         order: 10000
         predicates:
-        - Path=/**
+        - Path=/globalfilters
         filters:
         - PrefixPath=/application/gateway
+      # =====================================
+      - id: default_path_to_httpbin
+#        uri: ${test.uri}
+        uri: http://127.0.0.1:8081
+        order: 10000
+        predicates:
+        - Path=/**
 
 eureka:
   instance:
