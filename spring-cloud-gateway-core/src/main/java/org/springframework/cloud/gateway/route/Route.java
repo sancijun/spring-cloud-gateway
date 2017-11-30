@@ -46,7 +46,7 @@ public class Route implements Ordered {
      */
 	private final int order;
     /**
-     * 断言数组
+     * 谓语数组
      */
 	private final Predicate<ServerWebExchange> predicate;
     /**

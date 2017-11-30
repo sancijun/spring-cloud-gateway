@@ -17,13 +17,13 @@
 
 package org.springframework.cloud.gateway.handler.predicate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.tuple.Tuple;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author Spencer Gibb
@@ -42,6 +42,7 @@ public class MethodRoutePredicateFactory implements RoutePredicateFactory {
 		String method = args.getString(METHOD_KEY);
 		return exchange -> {
 			HttpMethod requestMethod = exchange.getRequest().getMethod();
+			// 正则匹配
 			return requestMethod.matches(method);
 		};
 	}

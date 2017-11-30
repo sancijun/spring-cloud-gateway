@@ -17,14 +17,14 @@
 
 package org.springframework.cloud.gateway.filter.factory;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.tuple.Tuple;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
@@ -54,7 +54,7 @@ public class PrefixPathGatewayFilterFactory implements GatewayFilterFactory {
 			String newPath = prefix + req.getURI().getPath();
 
 			ServerHttpRequest request = req.mutate()
-					.path(newPath)
+					.path(newPath) // 设置 Path
 					.build();
 
 			exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, request.getURI());

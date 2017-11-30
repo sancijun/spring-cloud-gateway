@@ -17,18 +17,16 @@
 
 package org.springframework.cloud.gateway.handler;
 
-import java.util.function.Function;
-import java.util.logging.Level;
-
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.web.reactive.handler.AbstractHandlerMapping;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.util.function.Function;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_HANDLER_MAPPER_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
-
-import reactor.core.publisher.Mono;
 
 /**
  * @author Spencer Gibb
@@ -42,23 +40,26 @@ public class RoutePredicateHandlerMapping extends AbstractHandlerMapping {
 		this.webHandler = webHandler;
 		this.routeLocator = routeLocator;
 
-		setOrder(1);
+		setOrder(1); // RequestMappingHandlerMapping 之后
 	}
 
 	@Override
 	protected Mono<?> getHandlerInternal(ServerWebExchange exchange) {
+	    // 设置 GATEWAY_HANDLER_MAPPER_ATTR 为 RoutePredicateHandlerMapping
 		exchange.getAttributes().put(GATEWAY_HANDLER_MAPPER_ATTR, getClass().getSimpleName());
 
-		return lookupRoute(exchange)
+		return lookupRoute(exchange) // 匹配 Route
 				// .log("route-predicate-handler-mapping", Level.FINER) //name this
-				.flatMap((Function<Route, Mono<?>>) r -> {
+				.flatMap((Function<Route, Mono<?>>) r -> { // 返回 FilteringWebHandler
 					if (logger.isDebugEnabled()) {
 						logger.debug("Mapping [" + getExchangeDesc(exchange) + "] to " + r);
 					}
 
+					// 设置 GATEWAY_ROUTE_ATTR 为 匹配的 Route
 					exchange.getAttributes().put(GATEWAY_ROUTE_ATTR, r);
+					// 返回
 					return Mono.just(webHandler);
-				}).switchIfEmpty(Mono.empty().then(Mono.fromRunnable(() -> {
+				}).switchIfEmpty(Mono.empty().then(Mono.fromRunnable(() -> { // 匹配不到 Route
 					if (logger.isTraceEnabled()) {
 						logger.trace("No RouteDefinition found for [" + getExchangeDesc(exchange) + "]");
 					}
@@ -74,7 +75,6 @@ public class RoutePredicateHandlerMapping extends AbstractHandlerMapping {
 		out.append(exchange.getRequest().getURI());
 		return out.toString();
 	}
-
 
 	protected Mono<Route> lookupRoute(ServerWebExchange exchange) {
 		return this.routeLocator.getRoutes()

@@ -17,21 +17,19 @@
 
 package org.springframework.cloud.gateway.filter.factory;
 
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.tuple.Tuple;
+import org.springframework.web.util.UriTemplate;
+import org.springframework.web.util.pattern.PathPattern.PathMatchInfo;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.tuple.Tuple;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.web.util.UriTemplate;
-import org.springframework.web.util.pattern.PathPattern.PathMatchInfo;
-
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.*;
 
 /**
  * @author Spencer Gibb
@@ -39,7 +37,6 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.a
 public class SetPathGatewayFilterFactory implements GatewayFilterFactory {
 
 	public static final String TEMPLATE_KEY = "template";
-
 
 	@Override
 	public List<String> argNames() {
@@ -64,6 +61,7 @@ public class SetPathGatewayFilterFactory implements GatewayFilterFactory {
 				uriVariables = Collections.emptyMap();
 			}
 
+			// 使用 路径参数进行 替换 请求Path
 			URI uri = uriTemplate.expand(uriVariables);
 			String newPath = uri.getPath();
 

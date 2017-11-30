@@ -17,14 +17,14 @@
 
 package org.springframework.cloud.gateway.handler.predicate;
 
+import org.springframework.tuple.Tuple;
+import org.springframework.util.Assert;
+import org.springframework.web.server.ServerWebExchange;
+
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.function.Predicate;
-
-import org.springframework.tuple.Tuple;
-import org.springframework.util.Assert;
-import org.springframework.web.server.ServerWebExchange;
 
 /**
  * @author Spencer Gibb
@@ -61,11 +61,12 @@ public class BetweenRoutePredicateFactory implements RoutePredicateFactory {
 	public static ZonedDateTime parseZonedDateTime(String dateString) {
 		ZonedDateTime dateTime;
 		try {
+		    // 数字
 			long epoch = Long.parseLong(dateString);
-
 			dateTime = Instant.ofEpochMilli(epoch).atOffset(ZoneOffset.ofTotalSeconds(0))
 					.toZonedDateTime();
 		} catch (NumberFormatException e) {
+		    // 字符串
 			// try ZonedDateTime instead
 			dateTime = ZonedDateTime.parse(dateString);
 		}

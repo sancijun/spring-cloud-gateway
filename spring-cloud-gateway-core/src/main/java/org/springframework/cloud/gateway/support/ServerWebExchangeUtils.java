@@ -17,13 +17,13 @@
 
 package org.springframework.cloud.gateway.support;
 
-import java.net.URI;
-import java.util.LinkedHashSet;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.net.URI;
+import java.util.LinkedHashSet;
 
 /**
  * @author Spencer Gibb
@@ -36,8 +36,10 @@ public class ServerWebExchangeUtils {
 
 	public static final String CLIENT_RESPONSE_ATTR = qualify("webHandlerClientResponse");
 	public static final String GATEWAY_ROUTE_ATTR = qualify("gatewayRoute");
+
 	public static final String GATEWAY_REQUEST_URL_ATTR = qualify("gatewayRequestUrl");
 	public static final String GATEWAY_ORIGINAL_REQUEST_URL_ATTR = qualify("gatewayOriginalRequestUrl");
+
 	public static final String GATEWAY_HANDLER_MAPPER_ATTR = qualify("gatewayHandlerMapper");
 
 	/**
@@ -80,7 +82,7 @@ public class ServerWebExchangeUtils {
 	}
 
 	public static void addOriginalRequestUrl(ServerWebExchange exchange, URI url) {
-		exchange.getAttributes().computeIfAbsent(GATEWAY_ORIGINAL_REQUEST_URL_ATTR, s -> new LinkedHashSet<>());
+		exchange.getAttributes().computeIfAbsent(GATEWAY_ORIGINAL_REQUEST_URL_ATTR, s -> new LinkedHashSet<>()); // 数组，考虑多次重写
 		LinkedHashSet<URI> uris = exchange.getRequiredAttribute(GATEWAY_ORIGINAL_REQUEST_URL_ATTR);
 		uris.add(url);
 	}

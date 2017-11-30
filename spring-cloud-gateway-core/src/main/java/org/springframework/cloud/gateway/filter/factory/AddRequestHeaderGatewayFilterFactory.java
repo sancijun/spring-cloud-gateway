@@ -39,11 +39,13 @@ public class AddRequestHeaderGatewayFilterFactory implements GatewayFilterFactor
 		String name = args.getString(NAME_KEY);
 		String value = args.getString(VALUE_KEY);
 
-		return (exchange, chain) -> {
+		return (exchange, chain) -> { // GatewayFilter
+            // 创建新的 ServerHttpRequest
 			ServerHttpRequest request = exchange.getRequest().mutate()
 					.header(name, value)
 					.build();
 
+			// 创建新的 ServerWebExchange ，提交过滤器链继续过滤
 			return chain.filter(exchange.mutate().request(request).build());
 		};
 	}

@@ -47,6 +47,9 @@ import java.util.List;
 @ConfigurationProperties("spring.cloud.gateway.filter.remove-non-proxy-headers")
 public class RemoveNonProxyHeadersGatewayFilterFactory implements GatewayFilterFactory {
 
+    /**
+     * 默认
+     */
 	public static final String[] DEFAULT_HEADERS_TO_REMOVE = new String[] {"Connection", "Keep-Alive",
 			"Proxy-Authenticate", "Proxy-Authorization", "TE", "Trailer", "Transfer-Encoding", "Upgrade"};
 
@@ -65,14 +68,16 @@ public class RemoveNonProxyHeadersGatewayFilterFactory implements GatewayFilterF
 		//TODO: support filter args
 
 		return (exchange, chain) -> {
+			// 创建新的 ServerHttpRequest
 			ServerHttpRequest request = exchange.getRequest().mutate()
 					.headers(httpHeaders -> {
 						for (String header : this.headers) {
-							httpHeaders.remove(header);
+							httpHeaders.remove(header); // 移除
 						}
 					})
 					.build();
 
+            // 创建新的 ServerWebExchange ，提交过滤器链继续过滤
 			return chain.filter(exchange.mutate().request(request).build());
 		};
 	}

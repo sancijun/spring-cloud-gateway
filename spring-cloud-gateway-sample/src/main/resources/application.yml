@@ -4,6 +4,8 @@ test:
   uri: http://${test.hostport}
 
 spring:
+  application:
+      name: juejin-gateway
   cloud:
     gateway:
       default-filters:
@@ -19,14 +21,26 @@ spring:
         uri: ws://localhost:9000
         order: 9000
         predicates:
-        - Path=/echo
-        - Query=foo, ba.
+        - Path=/foo/{segment}
+        filters:
+        - AddRequestHeader=X-Request-Foo, Bar
       # =====================================
-#      - id: default_path_to_httpbin
+      - id: default_path_to_httpbin
 #        uri: ${test.uri}
-#        order: 10000
-#        predicates:
-#        - Path=/**
+        uri: forward:///globalfilters
+        order: 10000
+        predicates:
+        - Path=/**
+        filters:
+        - PrefixPath=/application/gateway
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30
+  client:
+    serviceUrl:
+      defaultZone: http://eureka.didispace.com/eureka/
 
 logging:
   level:

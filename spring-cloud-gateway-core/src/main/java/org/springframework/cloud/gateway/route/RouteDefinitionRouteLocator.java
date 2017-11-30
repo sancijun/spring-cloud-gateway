@@ -122,7 +122,9 @@ public class RouteDefinitionRouteLocator implements RouteLocator, BeanFactoryAwa
 	}
 
 	private Route convertToRoute(RouteDefinition routeDefinition) {
+	    // 合并 Predicate
 		Predicate<ServerWebExchange> predicate = combinePredicates(routeDefinition);
+		// 获得 GatewayFilter
 		List<GatewayFilter> gatewayFilters = getFilters(routeDefinition);
 		// 构建 Route
 		return Route.builder(routeDefinition)
@@ -133,27 +135,28 @@ public class RouteDefinitionRouteLocator implements RouteLocator, BeanFactoryAwa
 
 	private List<GatewayFilter> loadGatewayFilters(String id, List<FilterDefinition> filterDefinitions) {
 		List<GatewayFilter> filters = filterDefinitions.stream()
-				.map(definition -> {
+				.map(definition -> { // FilterDefinition => GatewayFilter
+				    // 获得 GatewayFilterFactory
 					GatewayFilterFactory filter = this.gatewayFilterFactories.get(definition.getName());
 					if (filter == null) {
 						throw new IllegalArgumentException("Unable to find GatewayFilterFactory with name " + definition.getName());
 					}
+					// 获得 Tuple
 					Map<String, String> args = definition.getArgs();
 					if (logger.isDebugEnabled()) {
 						logger.debug("RouteDefinition " + id + " applying filter " + args + " to " + definition.getName());
 					}
-
 					Tuple tuple = getTuple(filter, args, this.parser, this.beanFactory);
-
+					// 获得 GatewayFilter
 					return filter.apply(tuple);
 				})
-				.collect(Collectors.toList());
-
+				.collect(Collectors.toList()); // 转成 List
+        // GatewayFilter => OrderedGatewayFilter
 		ArrayList<GatewayFilter> ordered = new ArrayList<>(filters.size());
 		for (int i = 0; i < filters.size(); i++) {
 			ordered.add(new OrderedGatewayFilter(filters.get(i), i+1));
 		}
-
+		// 返回 GatewayFilter 数组
 		return ordered;
 	}
 
@@ -161,6 +164,7 @@ public class RouteDefinitionRouteLocator implements RouteLocator, BeanFactoryAwa
 	/* for testing */ static Tuple getTuple(ArgumentHints hasArguments, Map<String, String> args, SpelExpressionParser parser, BeanFactory beanFactory) {
 		TupleBuilder builder = TupleBuilder.tuple();
 
+		// 参数为空
 		List<String> argNames = hasArguments.argNames();
 		if (!argNames.isEmpty()) {
 			// ensure size is the same for key replacement later
@@ -170,17 +174,18 @@ public class RouteDefinitionRouteLocator implements RouteLocator, BeanFactoryAwa
 			}
 		}
 
+		// 创建 Tuple
 		int entryIdx = 0;
 		for (Map.Entry<String, String> entry : args.entrySet()) {
+		    // 获得参数 KEY
 			String key = entry.getKey();
-
 			// RoutePredicateFactory has name hints and this has a fake key name
 			// replace with the matching key hint
 			if (key.startsWith(NameUtils.GENERATED_NAME_PREFIX) && !argNames.isEmpty()
 					&& entryIdx < args.size()) {
 				key = argNames.get(entryIdx);
 			}
-
+			// 获得参数 VALUE
 			Object value;
 			String rawValue = entry.getValue();
 			if (rawValue != null) {
@@ -195,13 +200,13 @@ public class RouteDefinitionRouteLocator implements RouteLocator, BeanFactoryAwa
 			} else {
 				value = entry.getValue();
 			}
-
+			// 添加 KEY / VALUE
 			builder.put(key, value);
 			entryIdx++;
 		}
-
 		Tuple tuple = builder.build();
 
+		// 校验参数
 		if (hasArguments.validateArgs()) {
 			for (String name : argNames) {
 				if (!tuple.hasFieldName(name)) {
@@ -214,46 +219,48 @@ public class RouteDefinitionRouteLocator implements RouteLocator, BeanFactoryAwa
 
 	private List<GatewayFilter> getFilters(RouteDefinition routeDefinition) {
 		List<GatewayFilter> filters = new ArrayList<>();
-
+		// 添加 默认过滤器
 		//TODO: support option to apply defaults after route specific filters?
 		if (!this.gatewayProperties.getDefaultFilters().isEmpty()) {
 			filters.addAll(loadGatewayFilters("defaultFilters",
 					this.gatewayProperties.getDefaultFilters()));
 		}
-
+		// 添加 配置的过滤器
 		if (!routeDefinition.getFilters().isEmpty()) {
 			filters.addAll(loadGatewayFilters(routeDefinition.getId(), routeDefinition.getFilters()));
 		}
-
+		// 排序
 		AnnotationAwareOrderComparator.sort(filters);
 		return filters;
 	}
 
 	private Predicate<ServerWebExchange> combinePredicates(RouteDefinition routeDefinition) {
+	    // 寻找 Predicate
 		List<PredicateDefinition> predicates = routeDefinition.getPredicates();
 		Predicate<ServerWebExchange> predicate = lookup(routeDefinition, predicates.get(0));
-
+		// 拼接 Predicate
 		for (PredicateDefinition andPredicate : predicates.subList(1, predicates.size())) {
 			Predicate<ServerWebExchange> found = lookup(routeDefinition, andPredicate);
 			predicate = predicate.and(found);
 		}
-
+		// 返回 Predicate
 		return predicate;
 	}
 
 	private Predicate<ServerWebExchange> lookup(RouteDefinition routeDefinition, PredicateDefinition predicate) {
+	    // 获得 RoutePredicateFactory
 		RoutePredicateFactory found = this.predicates.get(predicate.getName());
 		if (found == null) {
 			throw new IllegalArgumentException("Unable to find RoutePredicateFactory with name " + predicate.getName());
 		}
+		// 获得 Tuple
 		Map<String, String> args = predicate.getArgs();
 		if (logger.isDebugEnabled()) {
 			logger.debug("RouteDefinition " + routeDefinition.getId() + " applying "
 					+ args + " to " + predicate.getName());
 		}
-
 		Tuple tuple = getTuple(found, args, this.parser, this.beanFactory);
-
+		// 获得 Predicate
 		return found.apply(tuple);
 	}
 

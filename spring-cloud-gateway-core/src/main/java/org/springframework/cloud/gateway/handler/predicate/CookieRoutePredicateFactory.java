@@ -17,13 +17,13 @@
 
 package org.springframework.cloud.gateway.handler.predicate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.springframework.http.HttpCookie;
 import org.springframework.tuple.Tuple;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author Spencer Gibb
@@ -46,6 +46,7 @@ public class CookieRoutePredicateFactory implements RoutePredicateFactory {
 		return exchange -> {
 			List<HttpCookie> cookies = exchange.getRequest().getCookies().get(name);
 			for (HttpCookie cookie : cookies) {
+			    // 正则匹配
 				if (cookie.getValue().matches(regexp)) {
 					return true;
 				}

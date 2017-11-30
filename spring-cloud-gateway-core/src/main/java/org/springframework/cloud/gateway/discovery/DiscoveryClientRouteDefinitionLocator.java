@@ -17,8 +17,6 @@
 
 package org.springframework.cloud.gateway.discovery;
 
-import java.net.URI;
-
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory;
@@ -26,14 +24,15 @@ import org.springframework.cloud.gateway.handler.predicate.PathRoutePredicateFac
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
+import reactor.core.publisher.Flux;
+
+import java.net.URI;
 
 import static org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory.REGEXP_KEY;
 import static org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory.REPLACEMENT_KEY;
 import static org.springframework.cloud.gateway.handler.predicate.PathRoutePredicateFactory.PATTERN_KEY;
 import static org.springframework.cloud.gateway.support.NameUtils.normalizeFilterName;
 import static org.springframework.cloud.gateway.support.NameUtils.normalizePredicateName;
-
-import reactor.core.publisher.Flux;
 
 /**
  * TODO: developer configuration, in zuul, this was opt out, should be opt in
@@ -55,7 +54,9 @@ public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLoc
 		return Flux.fromIterable(discoveryClient.getServices())
 				.map(serviceId -> {
 					RouteDefinition routeDefinition = new RouteDefinition();
+					// 设置 ID
 					routeDefinition.setId(this.routeIdPrefix + serviceId);
+					// 设置 URI
 					routeDefinition.setUri(URI.create("lb://" + serviceId));
 
 					// add a predicate that matches the url at /serviceId
@@ -64,6 +65,7 @@ public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLoc
 					barePredicate.addArg(PATTERN_KEY, "/" + serviceId);
 					routeDefinition.getPredicates().add(barePredicate);*/
 
+					// 添加 Path 匹配断言
 					// add a predicate that matches the url at /serviceId/**
 					PredicateDefinition subPredicate = new PredicateDefinition();
 					subPredicate.setName(normalizePredicateName(PathRoutePredicateFactory.class));
@@ -72,6 +74,7 @@ public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLoc
 
 					//TODO: support for other default predicates
 
+                    // 添加 Path 重写过滤器
 					// add a filter that removes /serviceId by default
 					FilterDefinition filter = new FilterDefinition();
 					filter.setName(normalizeFilterName(RewritePathGatewayFilterFactory.class));

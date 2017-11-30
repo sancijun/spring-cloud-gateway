@@ -17,19 +17,20 @@
 
 package org.springframework.cloud.gateway.handler.predicate;
 
-import java.util.function.Predicate;
-
 import org.springframework.cloud.gateway.support.ArgumentHints;
 import org.springframework.cloud.gateway.support.NameUtils;
 import org.springframework.tuple.Tuple;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.util.function.Predicate;
 
 /**
  * @author Spencer Gibb
  */
 @FunctionalInterface
 public interface RoutePredicateFactory extends ArgumentHints {
-	String PATTERN_KEY = "pattern";
+
+    String PATTERN_KEY = "pattern";
 
 	Predicate<ServerWebExchange> apply(Tuple args);
 

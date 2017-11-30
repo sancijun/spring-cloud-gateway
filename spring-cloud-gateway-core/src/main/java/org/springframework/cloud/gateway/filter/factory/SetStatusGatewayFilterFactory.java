@@ -17,17 +17,16 @@
 
 package org.springframework.cloud.gateway.filter.factory;
 
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.tuple.Tuple;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.setResponseStatus;
-
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.setResponseStatus;
 
 /**
  * @author Spencer Gibb
@@ -56,7 +55,7 @@ public class SetStatusGatewayFilterFactory implements GatewayFilterFactory {
 			return chain.filter(exchange);*/
 
 			// option 2 (runs in reverse filter order)
-			return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+			return chain.filter(exchange).then(Mono.fromRunnable(() -> { // 将一个Runnable转换为Observable，当一个订阅者订阅时，它执行这个Runnable并发射Runnable的返回值
 				// check not really needed, since it is guarded in setStatusCode,
 				// but it's a good example
 				if (!exchange.getResponse().isCommitted()) {

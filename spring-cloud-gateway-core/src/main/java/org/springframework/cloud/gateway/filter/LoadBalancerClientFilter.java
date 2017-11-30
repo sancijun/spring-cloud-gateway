@@ -17,8 +17,6 @@
 
 package org.springframework.cloud.gateway.filter;
 
-import java.net.URI;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -26,13 +24,13 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
+
+import java.net.URI;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
-
-import reactor.core.publisher.Mono;
 
 /**
  * @author Spencer Gibb
@@ -55,23 +53,26 @@ public class LoadBalancerClientFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+	    // 获得 URL
 		URI url = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
 		if (url == null || !url.getScheme().equals("lb")) {
 			return chain.filter(exchange);
 		}
+        // 添加 原始请求URI 到 GATEWAY_ORIGINAL_REQUEST_URL_ATTR
 		//preserve the original url
 		addOriginalRequestUrl(exchange, url);
 
 		log.trace("LoadBalancerClientFilter url before: " + url);
 
+		// 获取 服务实例
 		final ServiceInstance instance = loadBalancer.choose(url.getHost());
-
 		if (instance == null) {
 			throw new NotFoundException("Unable to find instance for " + url.getHost());
 		}
 
 		/*URI uri = exchange.getRequest().getURI();
 		URI requestUrl = loadBalancer.reconstructURI(instance, uri);*/
+		//
 		URI requestUrl = UriComponentsBuilder.fromUri(url)
 				.scheme(instance.isSecure()? "https" : "http") //TODO: support websockets
 				.host(instance.getHost())
@@ -79,7 +80,11 @@ public class LoadBalancerClientFilter implements GlobalFilter, Ordered {
 				.build(true)
 				.toUri();
 		log.trace("LoadBalancerClientFilter url chosen: " + requestUrl);
+
+        // 添加 请求URI 到 GATEWAY_REQUEST_URL_ATTR
 		exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, requestUrl);
+
+        // 提交过滤器链继续过滤
 		return chain.filter(exchange);
 	}
 

@@ -17,12 +17,12 @@
 
 package org.springframework.cloud.gateway.handler.predicate;
 
+import org.springframework.tuple.Tuple;
+import org.springframework.web.server.ServerWebExchange;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-
-import org.springframework.tuple.Tuple;
-import org.springframework.web.server.ServerWebExchange;
 
 /**
  * @author Spencer Gibb
@@ -48,13 +48,14 @@ public class QueryRoutePredicateFactory implements RoutePredicateFactory {
 		String param = args.getString(PARAM_KEY);
 
 		return exchange -> {
+		    // 包含 参数
 			if (!args.hasFieldName(REGEXP_KEY)) {
 				// check existence of header
 				return exchange.getRequest().getQueryParams().containsKey(param);
 			}
 
+			// 正则匹配 参数
 			String regexp = args.getString(REGEXP_KEY);
-
 			List<String> values = exchange.getRequest().getQueryParams().get(param);
 			for (String value : values) {
 				if (value.matches(regexp)) {

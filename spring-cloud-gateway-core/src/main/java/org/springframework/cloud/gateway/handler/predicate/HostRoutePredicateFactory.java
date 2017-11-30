@@ -17,14 +17,14 @@
 
 package org.springframework.cloud.gateway.handler.predicate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.springframework.tuple.Tuple;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author Spencer Gibb
@@ -48,6 +48,7 @@ public class HostRoutePredicateFactory implements RoutePredicateFactory {
 
 		return exchange -> {
 			String host = exchange.getRequest().getHeaders().getFirst("Host");
+			// 匹配
 			return this.pathMatcher.match(pattern, host);
 		};
 	}

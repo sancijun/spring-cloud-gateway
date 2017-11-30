@@ -29,7 +29,7 @@ import java.util.Objects;
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
- * 断言定义
+ * 谓语定义
  *
  * @author Spencer Gibb
  */
@@ -37,7 +37,7 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 public class PredicateDefinition {
 
     /**
-     * 断言定义名字
+     * 谓语定义名字
      */
     @NotNull
 	private String name;

@@ -17,16 +17,16 @@
 
 package org.springframework.cloud.gateway.handler.predicate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.springframework.http.server.PathContainer;
 import org.springframework.tuple.Tuple;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPattern.PathMatchInfo;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
 import static org.springframework.cloud.gateway.handler.support.RoutePredicateFactoryUtils.traceMatch;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
@@ -50,6 +50,7 @@ public class PathRoutePredicateFactory implements RoutePredicateFactory {
 
 	@Override
 	public Predicate<ServerWebExchange> apply(Tuple args) {
+	    // 解析 Path ，创建对应的 PathPattern
 		String unparsedPattern = args.getString(PATTERN_KEY);
 		PathPattern pattern;
 		synchronized (this.pathPatternParser) {
@@ -59,9 +60,11 @@ public class PathRoutePredicateFactory implements RoutePredicateFactory {
 		return exchange -> {
 			PathContainer path = parsePath(exchange.getRequest().getURI().getPath());
 
+			// 匹配
 			boolean match = pattern.matches(path);
 			traceMatch("Pattern", pattern.getPatternString(), path, match);
 			if (match) {
+			    // 解析 路径参数，例如 path=/foo/123 <=> /foo/{segment}
 				PathMatchInfo uriTemplateVariables = pattern.matchAndExtract(path);
 				exchange.getAttributes().put(URI_TEMPLATE_VARIABLES_ATTRIBUTE, uriTemplateVariables);
 				return true;

@@ -44,7 +44,7 @@ public class RouteDefinition {
 	@NotEmpty
 	private String id = UUID.randomUUID().toString();
     /**
-     * 断言定义数组
+     * 谓语定义数组
      */
 	@NotEmpty
 	@Valid

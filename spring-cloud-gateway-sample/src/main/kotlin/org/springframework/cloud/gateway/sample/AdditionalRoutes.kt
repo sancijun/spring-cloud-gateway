@@ -14,9 +14,9 @@ class AdditionalRoutes {
 	@Bean
 	fun additionalRouteLocator(): RouteLocator = gateway {
 		route(id = "test-kotlin") {
-			uri("http://httpbin.org:80")
-			predicate(host("kotlin.abc.org") and path("/image/png"))
-			add(addResponseHeader("X-TestHeader", "foobar"))
+			uri("http://httpbin.org:80") // Route.Builder#uri(uri)
+			predicate(host("kotlin.abc.org") and path("/image/png")) // Route.Builder#predicate(predicate)
+			add(addResponseHeader("X-TestHeader", "foobar")) // Route.Builder#add(webFilter)
 		}
 	}
 
