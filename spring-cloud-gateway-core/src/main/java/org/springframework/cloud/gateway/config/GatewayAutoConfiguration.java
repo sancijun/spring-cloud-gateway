@@ -42,12 +42,16 @@ import org.springframework.cloud.gateway.route.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.reactive.DispatcherHandler;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
 import org.springframework.web.reactive.socket.client.WebSocketClient;
 import org.springframework.web.reactive.socket.server.WebSocketService;
 import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.ipc.netty.http.client.HttpClient;
 import reactor.ipc.netty.http.client.HttpClientOptions;
 import reactor.ipc.netty.resources.PoolResources;
@@ -84,15 +88,15 @@ public class GatewayAutoConfiguration {
 			};
 		}
 
-		@Bean // 1.3
-		public NettyRoutingFilter routingFilter(HttpClient httpClient) {
-			return new NettyRoutingFilter(httpClient);
-		}
-
-		@Bean // 1.4
-		public NettyWriteResponseFilter nettyWriteResponseFilter() {
-			return new NettyWriteResponseFilter();
-		}
+//		@Bean // 1.3
+//		public NettyRoutingFilter routingFilter(HttpClient httpClient) {
+//			return new NettyRoutingFilter(httpClient);
+//		}
+//
+//		@Bean // 1.4
+//		public NettyWriteResponseFilter nettyWriteResponseFilter() {
+//			return new NettyWriteResponseFilter();
+//		}
 
 		@Bean // 1.5 {@link org.springframework.cloud.gateway.filter.WebsocketRoutingFilter}
 		public ReactorNettyWebSocketClient reactorNettyWebSocketClient(@Qualifier("nettyClientOptions") Consumer<? super HttpClientOptions.Builder> options) {
@@ -178,7 +182,7 @@ public class GatewayAutoConfiguration {
 		return new WebsocketRoutingFilter(webSocketClient, webSocketService);
 	}
 
-	/*@Bean // TODO 芋艿，需要确认下原因
+	@Bean // TODO 芋艿，需要确认下原因
 	//TODO: default over netty? configurable
 	public WebClientHttpRoutingFilter webClientHttpRoutingFilter() {
 		//TODO: WebClient bean
@@ -189,11 +193,6 @@ public class GatewayAutoConfiguration {
 	public WebClientWriteResponseFilter webClientWriteResponseFilter() {
 		return new WebClientWriteResponseFilter();
 	}
-	*/
-//    @Bean
-//    public WebClientWriteResponseFilter webClientWriteResponseFilter() {
-//        return new WebClientWriteResponseFilter();
-//    }
 
 	// Predicate Factory beans
 

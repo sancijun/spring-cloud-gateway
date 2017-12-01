@@ -45,13 +45,25 @@ public class GatewayWebfluxEndpoint implements ApplicationEventPublisherAware {
 
 	private static final Log log = LogFactory.getLog(GatewayWebfluxEndpoint.class);
 
+    /**
+     * 路由定义定位器
+     */
 	private RouteDefinitionLocator routeDefinitionLocator;
+    /**
+     * 全局过滤器
+     */
 	private List<GlobalFilter> globalFilters;
-	private List<GatewayFilterFactory> GatewayFilters;
+    /**
+     * 网关过滤器工厂
+     */
+	private List<GatewayFilterFactory> gatewayFilters;
     /**
      * 存储器 RouteDefinitionLocator 对象
      */
 	private RouteDefinitionWriter routeDefinitionWriter;
+    /**
+     * 路由定位器
+     */
 	private RouteLocator routeLocator;
     /**
      * 应用事件发布器
@@ -63,7 +75,7 @@ public class GatewayWebfluxEndpoint implements ApplicationEventPublisherAware {
 								  RouteLocator routeLocator) {
 		this.routeDefinitionLocator = routeDefinitionLocator;
 		this.globalFilters = globalFilters;
-		this.GatewayFilters = GatewayFilters;
+		this.gatewayFilters = GatewayFilters;
 		this.routeDefinitionWriter = routeDefinitionWriter;
 		this.routeLocator = routeLocator;
 	}
@@ -89,7 +101,7 @@ public class GatewayWebfluxEndpoint implements ApplicationEventPublisherAware {
 
 	@GetMapping("/routefilters")
 	public Mono<HashMap<String, Object>> routefilers() {
-		return getNamesToOrders(this.GatewayFilters);
+		return getNamesToOrders(this.gatewayFilters);
 	}
 
 	private <T> Mono<HashMap<String, Object>> getNamesToOrders(List<T> list) {

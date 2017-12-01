@@ -11,7 +11,13 @@ public interface RateLimiter {
 	Mono<Response> isAllowed(String id, Tuple args);
 
 	class Response {
+        /**
+         * 是否允许访问( 未被限流 )
+         */
 		private final boolean allowed;
+        /**
+         * 令牌桶剩余数量
+         */
 		private final long tokensRemaining;
 
 		public Response(boolean allowed, long tokensRemaining) {

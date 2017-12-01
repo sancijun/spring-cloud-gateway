@@ -48,7 +48,7 @@ import static org.springframework.tuple.TupleBuilder.tuple;
  */
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@Import({AdditionalRoutes.class})
+@Import({Config.class, AdditionalRoutes.class})
 //@EnableDiscoveryClient // {@link DiscoveryClientRouteDefinitionLocator}
 public class GatewaySampleApplication {
 
@@ -87,7 +87,6 @@ public class GatewaySampleApplication {
             return Collections.singletonMap("from", "localcontroller");
         }
     }
-
 
 //	@Bean
 //    @Lazy(value = false)

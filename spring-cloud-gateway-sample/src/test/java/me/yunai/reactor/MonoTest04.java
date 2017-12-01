@@ -40,7 +40,6 @@ public class MonoTest04 {
             }
         }).then().block();
         Thread.sleep(10000);
-
     }
 
 }

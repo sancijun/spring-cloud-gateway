@@ -1,20 +1,19 @@
 package org.springframework.cloud.gateway.filter.ratelimit;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.tuple.Tuple;
-
-import static org.springframework.tuple.TupleBuilder.tuple;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.springframework.tuple.TupleBuilder.tuple;
 
 /**
  * See https://stripe.com/blog/rate-limiters and
@@ -76,11 +75,16 @@ public class RedisRateLimiter implements RateLimiter {
 			// allowed, tokens_left = redis.eval(SCRIPT, keys, args)
 			Flux<List<Long>> flux = this.redisTemplate.execute(this.script, keys, scriptArgs);
 					// .log("redisratelimiter", Level.FINER);
-			return flux.onErrorResume(throwable -> Flux.just(Arrays.asList(1L, -1L)))
+			return flux
+                    // Throwable => Flux.just(Arrays.asList(1L, -1L)) 。
+                    .onErrorResume(throwable -> Flux.just(Arrays.asList(1L, -1L)))
+                    // Flux<List<Long>> => Mono<List<Long>>
 					.reduce(new ArrayList<Long>(), (longs, l) -> {
 						longs.addAll(l);
 						return longs;
-					}) .map(results -> {
+					})
+                    // Mono<List<Long>> => Mono<Response>
+                    .map(results -> {
 						boolean allowed = results.get(0) == 1L;
 						Long tokensLeft = results.get(1);
 
@@ -90,7 +94,8 @@ public class RedisRateLimiter implements RateLimiter {
 							log.debug("response: " + response);
 						}
 						return response;
-					});
+					})
+                    ;
 		}
 		catch (Exception e) {
 			/*

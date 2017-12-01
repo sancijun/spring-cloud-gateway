@@ -1,7 +1,5 @@
 package org.springframework.cloud.gateway.config;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -23,6 +21,8 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.web.reactive.DispatcherHandler;
+
+import java.util.List;
 
 @Configuration
 @AutoConfigureAfter(RedisReactiveAutoConfiguration.class)
@@ -62,4 +62,5 @@ class GatewayRedisAutoConfiguration {
 											 @Qualifier("redisRequestRateLimiterScript") RedisScript<List<Long>> redisScript) {
 		return new RedisRateLimiter(redisTemplate, redisScript);
 	}
+
 }

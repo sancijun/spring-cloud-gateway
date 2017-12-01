@@ -40,6 +40,9 @@ spring:
         order: 10000
         predicates:
         - Path=/**
+        filters:
+        - RequestRateLimiter=10, 20, #{@principalNameKeyResolver}
+#         - Hystrix=myCommandName
 
 eureka:
   instance:
@@ -48,6 +51,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://eureka.didispace.com/eureka/
+    enabled: false
 
 logging:
   level:
@@ -55,6 +59,17 @@ logging:
     org.springframework.http.server.reactive: DEBUG
     org.springframework.web.reactive: DEBUG
     reactor.ipc.netty: DEBUG
+
+hystrix:
+  command:
+    default:
+      circuitBreaker:
+        forceOpen: true
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
 
 #management:
 #  context-path: /admin
