@@ -1,3 +1,50 @@
+# 个人博客
+
+-------
+
+![](http://www.yunai.me/images/common/wechat_mp.jpeg)
+
+> 🙂🙂🙂关注**微信公众号：【芋艿的后端小屋】**有福利：  
+> 1. RocketMQ / MyCAT / Sharding-JDBC **所有**源码分析文章列表  
+> 2. RocketMQ / MyCAT / Sharding-JDBC **中文注释源码 GitHub 地址**  
+> 3. 您对于源码的疑问每条留言**都**将得到**认真**回复。**甚至不知道如何读源码也可以请教噢**。  
+> 4. **新的**源码解析文章**实时**收到通知。**每周更新一篇左右**。
+
+-------
+
+# 联系方式
+
+* QQ : 7685413
+* 微信 : wangwenbin-server
+* 掘金-Java交流群 : 217878901
+* 知识星球：![知识星球](http://www.iocoder.cn/images/Architecture/2017_12_29/01.png)
+
+* 网关 **Spring-Cloud-Gateway**   
+    * [《Spring-Cloud-Gateway 源码解析 —— 调试环境搭建》](http://www.iocoder.cn/Spring-Cloud-Gateway/build-debugging-environment?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 网关初始化》](http://www.iocoder.cn/Spring-Cloud-Gateway/init?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 路由（1.1）之 RouteDefinitionLocator 一览》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-definition-locator-intro?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 路由（1.2）之 PropertiesRouteDefinitionLocator 配置文件》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-definition-locator-properties?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 路由（1.3）之 RouteDefinitionRepository 存储器》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-definition-locator-repository?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 路由（1.4）之 DiscoveryClientRouteDefinitionLocator 注册中心》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-definition-locator-discover-client?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 路由（2.1）之 RouteLocator 一览》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-locator-intro?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 路由（2.2）之 RouteDefinitionRouteLocator 路由配置》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-locator-route-definition?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 路由（2.3）之 Java 自定义 RouteLocator》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-locator-route-custom-java?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 路由（2.4）之 Kotlin 自定义 RouteLocator》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-locator-route-custom-kotlin?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 处理器 (3.1) 之 RoutePredicateFactory  路由谓语工厂》](http://www.iocoder.cn/Spring-Cloud-Gateway/handler-route-predicate-factory?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 处理器 (3.2) 之 RoutePredicateHandlerMapping 路由匹配》](http://www.iocoder.cn/Spring-Cloud-Gateway/handler-route-predicate-handler-mapping?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 处理器 (3.3) 之 FilteringWebHandler 创建过滤器链》](http://www.iocoder.cn/Spring-Cloud-Gateway/handler-filtering-web-handler?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.1) 之 GatewayFilter 一览》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-intro?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.2) 之 GatewayFilterFactory 过滤器工厂》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-factory?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.3) 之 RouteToRequestUrlFilter》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-route-to-request?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.4) 之 LoadBalancerClientFilter 负载均衡》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-load-balancer-client?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.5) 之 ForwardRoutingFilter》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-forward-routing?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.6) 之 WebSocketRoutingFilter》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-websocket-routing?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.7) 之 NettyRoutingFilter》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-netty-routing?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.8) 之 WebClientHttpRoutingFilter》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-web-client-http-routing?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.9) 之 HystrixGatewayFilterFactory 熔断》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-hystrix?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.10) 之 RequestRateLimiterGatewayFilterFactory 请求限流》](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-request-rate-limiter?github&1609)
+    * [《Spring-Cloud-Gateway 源码解析 —— 网关管理 HTTP API》](http://www.iocoder.cn/Spring-Cloud-Gateway/manager-http-api?github&1609)
+
 // Do not edit this file (e.g. go instead to src/main/asciidoc)
 
 image::https://circleci.com/gh/spring-cloud-incubator/spring-cloud-gateway/tree/master.svg?style=svg["CircleCI", link="https://circleci.com/gh/spring-cloud-incubator/spring-cloud-gateway/tree/master"]
