@@ -1,8 +1,10 @@
 # 个人博客
 
+[http://www.iocoder.cn](http://www.iocoder.cn/?github)
+
 -------
 
-![](http://www.yunai.me/images/common/wechat_mp.jpeg)
+![](http://www.iocoder.cn/images/common/wechat_mp.jpeg)
 
 > 🙂🙂🙂关注**微信公众号：【芋艿的后端小屋】**有福利：  
 > 1. RocketMQ / MyCAT / Sharding-JDBC **所有**源码分析文章列表  
@@ -12,14 +14,10 @@
 
 -------
 
-# 联系方式
-
-* QQ : 7685413
-* 微信 : wangwenbin-server
-* 掘金-Java交流群 : 217878901
 * 知识星球：![知识星球](http://www.iocoder.cn/images/Architecture/2017_12_29/01.png)
 
-* 网关 **Spring-Cloud-Gateway**   
+* 网关 **Spring-Cloud-Gateway**
+
     * [《Spring-Cloud-Gateway 源码解析 —— 调试环境搭建》](http://www.iocoder.cn/Spring-Cloud-Gateway/build-debugging-environment?github&1609)
     * [《Spring-Cloud-Gateway 源码解析 —— 网关初始化》](http://www.iocoder.cn/Spring-Cloud-Gateway/init?github&1609)
     * [《Spring-Cloud-Gateway 源码解析 —— 路由（1.1）之 RouteDefinitionLocator 一览》](http://www.iocoder.cn/Spring-Cloud-Gateway/route-definition-locator-intro?github&1609)
