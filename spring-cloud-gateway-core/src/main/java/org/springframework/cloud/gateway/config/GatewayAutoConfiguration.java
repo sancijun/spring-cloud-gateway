@@ -71,10 +71,13 @@ import java.util.function.Consumer;
 @ConditionalOnClass(DispatcherHandler.class)
 public class GatewayAutoConfiguration {
 
+	/**
+	 * 初始化 Netty 配置
+	 */
 	@Configuration
 	@ConditionalOnClass(HttpClient.class)
 	protected static class NettyConfiguration {
-		@Bean // 1.2
+		@Bean // 1.2 该 HttpClient 使用 Netty 实现的 Client 。
 		@ConditionalOnMissingBean
 		public HttpClient httpClient(@Qualifier("nettyClientOptions") Consumer<? super HttpClientOptions.Builder> options) {
 			return HttpClient.create(options);
@@ -88,41 +91,49 @@ public class GatewayAutoConfiguration {
 			};
 		}
 
-//		@Bean // 1.3
+//		@Bean // 1.3 使用 HttpClient Bean ，创建一个类型为 NettyRoutingFilter 的 Bean 对象
 //		public NettyRoutingFilter routingFilter(HttpClient httpClient) {
 //			return new NettyRoutingFilter(httpClient);
 //		}
 //
-//		@Bean // 1.4
+//		@Bean // 1.4 创建一个类型为 NettyWriteResponseFilter 的 Bean 对象。
 //		public NettyWriteResponseFilter nettyWriteResponseFilter() {
 //			return new NettyWriteResponseFilter();
 //		}
 
 		@Bean // 1.5 {@link org.springframework.cloud.gateway.filter.WebsocketRoutingFilter}
+				// 创建一个类型为 ReactorNettyWebSocketClient 的 Bean 对象，用于下文 WebsocketRoutingFilter 的 Bean 对象创建。
 		public ReactorNettyWebSocketClient reactorNettyWebSocketClient(@Qualifier("nettyClientOptions") Consumer<? super HttpClientOptions.Builder> options) {
 			return new ReactorNettyWebSocketClient(options);
 		}
 	}
+	// 初始化 RouteDefinitionLocator
 
-	@Bean // 4.1
+	/**
+	 * 4.1 使用 GatewayProperties Bean ，创建一个类型为PropertiesRouteDefinitionLocator 的 Bean 对象，
+	 * 	用于从配置文件中装载 RouteDefinition
+	 */
+	@Bean
 	@ConditionalOnMissingBean
 	public PropertiesRouteDefinitionLocator propertiesRouteDefinitionLocator(GatewayProperties properties) {
 		return new PropertiesRouteDefinitionLocator(properties);
 	}
 
-	@Bean // 4.2
+	@Bean // 4.2 创建 InMemoryRouteDefinitionRepository
 	@ConditionalOnMissingBean(RouteDefinitionRepository.class)
 	public InMemoryRouteDefinitionRepository inMemoryRouteDefinitionRepository() {
 		return new InMemoryRouteDefinitionRepository();
 	}
 
+	// DiscoveryClientRouteDefinitionLocator ，基于 DiscoveryClient 注册发现的 RouteDefinitionLocator 实现类，需要手动引入配置
 	@Bean // 4.3
 	@Primary // 优先被注入
 	public RouteDefinitionLocator routeDefinitionLocator(List<RouteDefinitionLocator> routeDefinitionLocators) {
 		return new CompositeRouteDefinitionLocator(Flux.fromIterable(routeDefinitionLocators));
 	}
 
-	@Bean // 4.4
+	// 初始化 RouteLocator
+	@Bean // 4.4 此处的 routeDefinitionLocator 参数，使用了 @Primary 注解的 CompositeRouteDefinitionLocator 的 Bean 对象。
 	public RouteLocator routeDefinitionRouteLocator(GatewayProperties properties,
 												   List<GatewayFilterFactory> GatewayFilters,
 												   List<RoutePredicateFactory> predicates,
@@ -130,17 +141,24 @@ public class GatewayAutoConfiguration {
 		return new RouteDefinitionRouteLocator(routeDefinitionLocator, predicates, GatewayFilters, properties);
 	}
 
+	/**
+	 * 该 Bean 对象内嵌了 CompositeRouteLocator 对象
+	 */
 	@Bean // 4.5 // TODO 芋艿，where are you 【1】AdditionalRoutes 【2】customRouteLocator 【3】上面 routeDefinitionRouteLocator
 	@Primary
 	public RouteLocator routeLocator(List<RouteLocator> routeLocators) {
 		return new CachingRouteLocator(new CompositeRouteLocator(Flux.fromIterable(routeLocators)));
 	}
 
-	@Bean // 2.6
+	 		// 2.6 当所有 GlobalFilter 初始化完成时( 包括上面的 NettyRoutingFilter / NettyWriteResponseFilter )，
+	 @Bean	// 创建一个类型为 org.springframework.cloud.gateway.handler.FilteringWebHandler 的 Bean 对象
 	public FilteringWebHandler filteringWebHandler(List<GlobalFilter> globalFilters) {
 		return new FilteringWebHandler(globalFilters);
 	}
 
+	/**
+	 * 初始化 RoutePredicateHandlerMapping 用于查找匹配到 Route ，并进行处理。
+	 */
 	@Bean
 	public RoutePredicateHandlerMapping routePredicateHandlerMapping(FilteringWebHandler webHandler,
 																	   RouteLocator routeLocator) {
@@ -148,7 +166,7 @@ public class GatewayAutoConfiguration {
 	}
 
 	// ConfigurationProperty beans
-
+	// 创建一个类型为 GatewayProperties 的 Bean 对象，用于加载配置文件配置的 RouteDefinition / FilterDefinition
 	@Bean // 2.7
 	public GatewayProperties gatewayProperties() {
 		return new GatewayProperties();
@@ -159,7 +177,7 @@ public class GatewayAutoConfiguration {
 		return new SecureHeadersProperties();
 	}
 
-	// GlobalFilter beans
+	// 【GlobalFilter】 beans
 
 	@Bean // 2.1
 	public RouteToRequestUrlFilter routeToRequestUrlFilter() {
@@ -195,7 +213,7 @@ public class GatewayAutoConfiguration {
 	}
 
 	// Predicate Factory beans
-
+	// 创建 RoutePredicateFactory 接口的实现们
 	@Bean // 3.15
 	public AfterRoutePredicateFactory afterRoutePredicateFactory() {
 		return new AfterRoutePredicateFactory();
@@ -246,8 +264,8 @@ public class GatewayAutoConfiguration {
 		return new RemoteAddrRoutePredicateFactory();
 	}
 
-	// GatewayFilter Factory beans
-
+	// 【GatewayFilter】 Factory beans
+	// 创建 GatewayFilterFactory 接口的实现们
 	@Bean // 3.1
 	public AddRequestHeaderGatewayFilterFactory addRequestHeaderGatewayFilterFactory() {
 		return new AddRequestHeaderGatewayFilterFactory();
@@ -334,6 +352,9 @@ public class GatewayAutoConfiguration {
 		return new SetStatusGatewayFilterFactory();
 	}
 
+	/**
+	 * 初始化 GatewayWebfluxEndpoint 提供管理网关的 HTTP API
+	 */
 	@ManagementContextConfiguration
 	@ConditionalOnProperty(value = "management.gateway.enabled", matchIfMissing = true)
 	@ConditionalOnClass(Health.class)
